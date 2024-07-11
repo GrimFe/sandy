@@ -1056,7 +1056,7 @@ def _groupr_input(endfin, pendfin, gendfout, mat,
     return "\n".join(text) + "\n"
 
 
-def _run_njoy(text, endf, pendf=None, exe=None):
+def _run_njoy(text, endf, pendf=None, exe=None, njoy_output=None):
     """
     Run njoy executable for given input.
 
@@ -1070,10 +1070,14 @@ def _run_njoy(text, endf, pendf=None, exe=None):
         njoy input file passed to `Popen` as `stdin` (it must be encoded first)
     exe : `str`, optional, default is `None`
         njoy executable: if `None` (default) get it from `NJOY` env variable
+    njoy_output : `int`, optional, default is `None`
+        target of stderr and stdout for the NJOY process. If `None`, NJOY will 
+        print its output in the terminal. If `subprocess.DEVNULL`, NJOY
+        output will be suppressed, default is `None`.
     """
     if exe is None:
         exe = get_njoy()
-    stdout = stderr = None
+    stdout = stderr = njoy_output
     stdin = text.encode()
     with TemporaryDirectory() as tmpdir:
         shutil.copy(endf, os.path.join(tmpdir, "tape20"))
@@ -1320,6 +1324,7 @@ def process_neutron(
         exe=None,
         verbose=True,
         dryrun=False,
+        njoy_output=None,
         **kwargs,
         ):
     """
@@ -1338,6 +1343,10 @@ def process_neutron(
         njoy executable (with path)
         .. note:: if no executable is given, SANDY looks for a default
                   executable in `PATH` and in env variable `NJOY`
+    njoy_output : `int`, optional, default is `None`
+        target of stderr and stdout for the NJOY process. If `None`, NJOY will 
+        print its output in the terminal. If `subprocess.DEVNULL`, NJOY
+        output will be suppressed, default is `None`.
     route : `str`, optional, default is `0`
         xsdir "route" parameter
     suffixes : iterable of `int`, optional, default is `None`
@@ -1377,7 +1386,7 @@ def process_neutron(
     # Run njoy
     if dryrun:
         return text
-    outputs = _run_njoy(text, endftape, pendftape, exe=exe)
+    outputs = _run_njoy(text, endftape, pendftape, exe=exe, njoy_output=njoy_output)
     
     # Minimal output post-processing
     if "xsdir" in outputs:
@@ -1401,6 +1410,7 @@ def process_proton(
         tag="",
         exe=None,
         route="0",
+        njoy_output=None,
         **kwargs,
         ):
     """Run sequence to process proton file with njoy.
@@ -1416,6 +1426,10 @@ def process_proton(
             any `xsdir` file
     dryrun : `bool`
         option to produce the njoy input file without running njoy
+    njoy_output : `int`, optional, default is `None`
+        target of stderr and stdout for the NJOY process. If `None`, NJOY will 
+        print its output in the terminal. If `subprocess.DEVNULL`, NJOY
+        output will be suppressed, default is `None`.
     tag : `str`
         tag to append to each output filename beofre the extension
         (default is `None`)
@@ -1455,7 +1469,7 @@ def process_proton(
     outputs["tape70"] = join(wdir, "{}{}{}h.xsd".format(za_new, tag, suff))
     text += "stop"
     if not dryrun:
-        _run_njoy(text, inputs, outputs, exe=exe)
+        _run_njoy(text, inputs, outputs, exe=exe, njoy_output=njoy_output)
         # Change route and filename in xsdir file.
         acefile = outputs["tape50"]
         xsdfile = outputs["tape70"]
