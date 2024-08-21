@@ -45,7 +45,7 @@ jobs:
 
       # Install the sandy package
       - name: Install sandy
-        run: pip install --no-cache-dir --user .[test,notebook,doc]
+        run: pip install --no-cache-dir --user .[test,notebook,doc] "numpy<2"  # to comply with serpentTools
 
       # Run all the jupyter notebooks
       - name: run notebooks
