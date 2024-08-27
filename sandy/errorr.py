@@ -189,7 +189,7 @@ class Errorr(_FormattedFile):
         (20000000.0, 24000000.0]               6.81128e-02               0.00000e+00               0.00000e+00
         (24000000.0, 28000000.0]               7.52293e-02               0.00000e+00               0.00000e+00
 
-        This example shows proper function of the `get_cov` method with MF
+        This example shows functioning of the `get_cov` method with MF
         31, 33 and 35
         >>> import numpy as np
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
@@ -210,7 +210,7 @@ class Errorr(_FormattedFile):
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
         >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
                                 groupr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
-                                err=1, xs=False, chi=False, nubar=True, mubar=False)['errorr31']
+                                err=1, xs=False, chi=True, nubar=False, mubar=False)['errorr35']
         >>> datamg = err.get_cov().data
         >>> np.testing.assert_equal(datamg.values,
                                     [[1.750390e-03, 4.450283e-08], [4.450283e-08, 1.622930e-10]])
