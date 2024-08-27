@@ -189,6 +189,32 @@ class Errorr(_FormattedFile):
         (20000000.0, 24000000.0]               6.81128e-02               0.00000e+00               0.00000e+00
         (24000000.0, 28000000.0]               7.52293e-02               0.00000e+00               0.00000e+00
 
+        This example shows proper function of the `get_cov` method with MF
+        31, 33 and 35
+        >>> import numpy as np
+        >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
+        >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
+                                groupr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
+                                err=1, xs=False, chi=False, nubar=True, mubar=False)['errorr31']
+        >>> datamg = err.get_cov().data
+        >>> np.testing.assert_equal(datamg.values,
+                                    [[3.153674e-05, 1.413344e-05],[1.413344e-05, 1.643044e-05]])
+
+        >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
+        >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
+                                err=1, xs=True, chi=False, nubar=False, mubar=False)['errorr33']
+        >>> datamg = err.get_cov().data
+        >>> np.testing.assert_equal(datamg.loc[(9228, 1), (9228, 1)].values,
+                                    [[5.010968e-05, 4.428056e-06], [4.428056e-06, 2.514057e-04]])
+
+        >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
+        >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
+                                groupr_kws=dict(ek=[1e-2, 1e1, 2e7], iwt=8),
+                                err=1, xs=False, chi=False, nubar=True, mubar=False)['errorr31']
+        >>> datamg = err.get_cov().data
+        >>> np.testing.assert_equal(datamg.values,
+                                    [[1.750390e-03, 4.450283e-08], [4.450283e-08, 1.622930e-10]])
+
         Test selecting only specific MT's.
         >>> err = sandy.get_endf6_file("jeff_33", "xs", 10010).get_errorr(err=1)["errorr33"]
         >>> cov = err.get_cov()
@@ -202,7 +228,7 @@ class Errorr(_FormattedFile):
         eg = pd.IntervalIndex.from_breaks(eg)  # multigroup
     
         # initialize global cov matrix with all MAT, MT
-        ix = pd.DataFrame(self.filter_by(listmf=[31, 33]).data.keys(),
+        ix = pd.DataFrame(self.filter_by(listmf=[31, 33, 35]).data.keys(),
                           columns=["MAT", "MF", "MT"])[["MAT", "MT"]]
         ix["IMIN"] = ix.index * eg.size
         ix["IMAX"] = (ix.index + 1) * eg.size
@@ -211,8 +237,8 @@ class Errorr(_FormattedFile):
         c = np.zeros((nsize, nsize))
         
         # Fill matrix
-        for mat, mf, mt in self.filter_by(listmf=[31, 33]).data:
-            mf33 = sandy.errorr.read_mf33(self, mat, mt)
+        for mat, mf, mt in self.filter_by(listmf=[31, 33, 35]).data:
+            mf33 = read_mf33(self, mat, mt, 33 if mf == 31 else mf)
         
             for mt1, cov in mf33["COVS"].items():
                 ivals = ix.query("MAT==@mat & MT==@mt").squeeze()
