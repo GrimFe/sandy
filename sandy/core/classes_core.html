@@ -1,0 +1,182 @@
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      <div class="mermaid">
+    
+        classDiagram
+          class BaseCov {
+            mat
+            mt
+            check_diagonal(verbose)
+            corr()
+            eig()
+            filter_by(index_key, index_values, columns_key, columns_values)
+            get_std()
+            get_var()
+            to_matrix()
+          }
+          class CategoryCov {
+            data
+            data : DataFrame
+            size
+            corr2cov(std)
+            from_csv(file)
+            from_stack(data_stack, index, columns, values, rows, kind)
+            from_stdev(std)
+            from_var(var)
+            get_L(rows, tolerance)
+            get_corr()
+            get_eig(tolerance)
+            get_std()
+            gls_cov_update(S, Vy_extra)
+            invert()
+            random_corr(size, correlations, seed)
+            random_cov(size, stdmin, stdmax, correlations, seed)
+            sampling(nsmp, seed, pdf, tolerance, relative)
+            sandwich(s)
+            to_sparse(method)
+          }
+          class Endf6 {
+            apply_perturbations(smp, processes)
+            get_ace(suffix, pendf)
+            get_errorr(nubar, mubar, chi, xs)
+            get_gendf()
+            get_id(method)
+            get_nsub()
+            get_pendf()
+            get_perturbations(nsmp, to_excel, njoy_kws, smp_kws)
+            get_records()
+            read_section(mat, mf, mt, raise_error)
+            update_intro()
+          }
+          class EnergyCov {
+            data
+            data
+            add(cov, inplace)
+            change_grid(ex, ey, inplace)
+            from_lb1(evalues, fvalues)
+            from_lb2(evalues, fvalues)
+            from_lb5_asym(evalues, fvalues)
+            from_lb5_sym(evalues, fvalues)
+            from_lb6(evalues_r, evalues_c, fvalues)
+            sum_covs()
+          }
+          class EnergyCov {
+            columns : Float64Index
+            index : Float64Index
+            change_grid(ex, ey)
+            from_lb1(evalues, fvalues)
+            from_lb2(evalues, fvalues)
+            from_lb5_asym(evalues, fvalues)
+            from_lb5_sym(evalues, fvalues)
+            from_lb6(evalues_r, evalues_c, fvalues)
+            sum_covs()
+          }
+          class Lpc {
+            data
+            data : DataFrame
+            custom_perturbation(mat, mt, p, pert)
+            filter_by(key, value)
+            from_endf6(endf6)
+            reshape(eg, selected_mat, selected_mt)
+            to_endf6(endf6)
+            to_tpd(cosines)
+          }
+          class LpcCov {
+            labels : list
+            names : list
+            filter_p(p)
+            from_endf6(endf6)
+            get_samples(nsmp)
+            plot_std(display)
+          }
+          class Samples {
+            data
+            data : DataFrame
+            get_condition_number()
+            get_cov()
+            get_mean()
+            get_rstd()
+            get_std()
+            iterate_xs_samples()
+            test_shapiro(size, pdf)
+          }
+          class Tpd {
+            data
+            data : DataFrame
+            integrals
+          }
+          class Xs {
+            data
+            data : DataFrame
+            redundant_xs : dict
+            custom_perturbation(mat, mt, pert)
+            from_endf6(endf6)
+            perturb(smp, processes)
+            reconstruct_sums(drop)
+            reshape(eg)
+            to_endf6(endf6)
+          }
+          class XsCov {
+            columns
+            index
+            labels : list
+            names : list
+            from_csv(file)
+            from_endf6(endf6)
+            from_errorr(errorr)
+            get_samples(nsmp, eig, seed)
+            get_section(mat, mt, mat1, mt1)
+          }
+          class XsCov2 {
+            data
+            data : NoneType
+            labels : list
+            append(mat, mt, mat1, mt1, cov, inplace)
+            from_csv(file)
+            from_endf6(endf6)
+            get_samples(nsmp, eig, seed)
+            get_section(mat, mt, mat1, mt1)
+          }
+          class _Cov {
+            corr()
+            eig()
+            get_L()
+            sampling(nsmp, seed)
+          }
+          class _FormattedFile {
+            data
+            data
+            file : NoneType
+            is_empty
+            keys
+            kind
+            mat
+            mf
+            mt
+            add_section(mat, mf, mt, text)
+            add_sections(sections)
+            change_value(val, mat, mf, mt, line_number, pos, inplace, dtype)
+            delete_section(mat, mf, mt, raise_error)
+            delete_sections(sections, raise_error)
+            filter_by(listmat, listmf, listmt)
+            from_file(file)
+            from_text(text)
+            from_url(filename, rooturl)
+            from_zipurl(filename, rooturl)
+            get_value(mat, mf, mt, line_number, pos)
+            merge()
+            read_url(filename, rooturl)
+            read_zipurl(filename, rooturl)
+            to_file(filename, mode)
+            to_series()
+            write_string(title)
+          }
+          EnergyCov --|> CategoryCov
+          Endf6 --|> _FormattedFile
+          LpcCov --|> BaseCov
+          XsCov --|> BaseCov
+  
+       </div>
+  </body>
+</html>
