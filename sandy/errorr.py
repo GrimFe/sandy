@@ -322,7 +322,7 @@ def read_mf3(tape, mat, mt):
     return out
 
 
-def read_mf33(tape, mat, mt):
+def read_mf33(tape, mat, mt, mf=33):
     """
     Parse MAT/MF=33/MT section from `sandy.Errorr` object and return
     structured content in nested dcitionaries.
@@ -335,13 +335,14 @@ def read_mf33(tape, mat, mt):
         MAT number
     mt : `int`
         MT number
+    mf : `int`, optional
+        MF number. Default is 33.
 
     Returns
     -------
     out : `dict`
         Content of the ENDF-6 tape structured as nested `dict`.
     """
-    mf = 33
     df = tape._get_section_df(mat, mf, mt)
     out = {
             "MAT": mat,
