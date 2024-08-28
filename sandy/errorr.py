@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 import logging
-import pytest
 
-import sandy
-from sandy.core.endf6 import _FormattedFile
+from .core.endf6 import _FormattedFile
+from .core.cov import CategoryCov
+from .core.xs import Xs
+from .core.records import read_cont, read_list
 
 __author__ = "Luca Fiorito"
 __all__ = [
@@ -30,8 +31,7 @@ class Errorr(_FormattedFile):
 
     def get_energy_grid(self, **kwargs):
         """
-                Extract breaks of multi-group energy grid from ERRORR
-                output file.
+        Extract breaks of multi-group energy grid from ERRORR output file.
 
         Parameters
         ----------
@@ -41,10 +41,12 @@ class Errorr(_FormattedFile):
         Returns
         -------
         `np.array`
-            The energy grid of the `sandy.Errorr` object.
+            The energy grid of the :obj:`~sandy.errorr.Errorr` object.
 
         Examples
         --------
+
+        >>> import sandy
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 10010)
         >>> ek = sandy.energy_grids.CASMO12
         >>> err = e6.get_errorr(errorr_kws=dict(ek=ek), err=1)['errorr33']
@@ -66,6 +68,8 @@ class Errorr(_FormattedFile):
 
         Examples
         --------
+
+        >>> import sandy
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 10010)
         >>> ek = sandy.energy_grids.CASMO12
         >>> err = e6.get_errorr(err=1, errorr_kws=dict(ek=ek))['errorr33']
@@ -128,19 +132,19 @@ class Errorr(_FormattedFile):
         for mat, mf, mt in self.filter_by(listmf=[3],
                                           listmt=listmt_,
                                           listmat=listmat_).data:
-            mf1 = sandy.errorr.read_mf1(self, mat)
+            mf1 = read_mf1(self, mat)
             egn = pd.IntervalIndex.from_breaks(mf1["EG"])
-            mf3 = sandy.errorr.read_mf3(self, mat, mt)
+            mf3 = read_mf3(self, mat, mt)
             columns = pd.MultiIndex.from_tuples([(mat, mt)],
                                                 names=["MAT", "MT"])
             index = pd.Index(egn, name="E")
             data.append(pd.DataFrame(mf3["XS"], index=index, columns=columns))
         data = pd.concat(data, axis=1).fillna(0)
-        return sandy.Xs(data)
+        return Xs(data)
 
     def get_cov(self, mts=None):
         """
-        Extract cross section/nubar covariance from :obj: `sandy.Errorr` instance.
+        Extract cross section/nubar covariance from :obj:`~sandy.errorr.Errorr` instance.
 
         Parameters
         ----------
@@ -155,12 +159,15 @@ class Errorr(_FormattedFile):
 
         Returns
         -------
-        :obj: `sandy.CategoryCov`
-            xs/nubar covariance matrix for all cross section/nubar
-            MAT/MT in ERRORR file.
+        :obj:`~sandy.core.cov.CategoryCov`
+            xs/nubar/pfns covariance matrix for all MAT/MT in ERRORR file.
 
         Examples
         --------
+
+        Read cross section covariance matrix for simple case (H1).
+
+        >>> import sandy, pytest
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 10010)
         >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7]), err=1, temperature=0.1)['errorr33']
         >>> datamg = err.get_cov().data
@@ -178,7 +185,9 @@ class Errorr(_FormattedFile):
       
         This example shows the cross correlation among two MT taken from a
         cross section covariance matrix (MF=33) with 3 energy groups at high
-        energy. There is no correlation in the last two groups. 
+        energy.
+        There is no correlation in the last two groups. 
+
         >>> tape = sandy.get_endf6_file("jeff_33", "xs", 641530)
         >>> out = tape.get_errorr(err=1, errorr33_kws=dict(irespr=0, mt=[1, 51, 52],ek=[1e7,2e7,2.4e7, 2.8e7]))
         >>> cov = out["errorr33"].get_cov().data
@@ -189,18 +198,23 @@ class Errorr(_FormattedFile):
         (20000000.0, 24000000.0]               6.81128e-02               0.00000e+00               0.00000e+00
         (24000000.0, 28000000.0]               7.52293e-02               0.00000e+00               0.00000e+00
 
-        This example shows functioning of the `get_cov` method with MF
-        31, 33 and 35
+        This example shows functioning of the `get_cov` method with `MF=31`, `MF=33` and `MF=35`.
+        The first case if for `MF=31`.
+        
         >>> import numpy as np
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
         >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7]), groupr_kws=dict(ek=[1e-2, 1e1, 2e7]), err=1, xs=False, chi=False, nubar=True, mubar=False)['errorr31']
         >>> datamg = err.get_cov().data
         >>> np.testing.assert_equal(datamg.values, [[3.153674e-05, 1.413344e-05],[1.413344e-05, 1.643044e-05]])
 
+        The second case if for `MF=33`.
+        
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
         >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7]), err=1, xs=True, chi=False, nubar=False, mubar=False)['errorr33']
         >>> datamg = err.get_cov().data
         >>> np.testing.assert_equal(datamg.loc[(9228, 1), (9228, 1)].values, [[2.060002e-04, 6.686222e-08],[6.686222e-08, 7.581125e-05]])
+
+        The third case if for `MF=35`.
 
         >>> e6 = sandy.get_endf6_file("jeff_33", "xs", 922350)
         >>> err = e6.get_errorr(errorr_kws=dict(ek=[1e-2, 1e1, 2e7]), groupr_kws=dict(ek=[1e-2, 1e1, 2e7]), err=1, xs=False, chi=True, nubar=False, mubar=False)['errorr35']
@@ -208,6 +222,7 @@ class Errorr(_FormattedFile):
         >>> np.testing.assert_equal(datamg.values, [[1.750390e-03, 4.450283e-08],[4.450283e-08, 1.622930e-10]])
 
         Test selecting only specific MT's.
+
         >>> err = sandy.get_endf6_file("jeff_33", "xs", 10010).get_errorr(err=1)["errorr33"]
         >>> cov = err.get_cov()
         >>> np.testing.assert_array_equal(cov.data.index.get_level_values("MT").unique(), [1, 2, 102])
@@ -252,26 +267,26 @@ class Errorr(_FormattedFile):
             mask = idx.get_level_values("MT").isin(mts)
             if not mask.any():
                 raise ValueError("No requested MT number was found in ERRORR file")
-            out = sandy.CategoryCov(c[mask][:, mask], index=idx[mask], columns=idx[mask])
+            out = CategoryCov(c[mask][:, mask], index=idx[mask], columns=idx[mask])
             
             notfound = set(mts) - set(idx.get_level_values("MT"))
             if notfound:
                 logging.warning(f"The following MT's were not found in ERRORR file: {notfound}")
   
         else:
-            out = sandy.CategoryCov(c, index=idx, columns=idx)
+            out = CategoryCov(c, index=idx, columns=idx)
   
         return out
 
 
 def read_mf1(tape, mat):
     """
-    Parse MAT/MF=1/MT=451 section from `sandy.Errorr` object and return
+    Parse MAT/MF=1/MT=451 section from :obj:`~sandy.errorr.Errorr` object and return
     structured content in nested dcitionaries.
 
     Parameters
     ----------
-    tape : `sandy.Errorr`
+    tape : :obj:`~sandy.errorr.Errorr`
         endf6 object containing requested section
     mat : `int`
         MAT number
@@ -290,14 +305,14 @@ def read_mf1(tape, mat):
             "MT": mt,
             }
     i = 0
-    C, i = sandy.read_cont(df, i)
+    C, i = read_cont(df, i)
     add = {
         "ZA": C.C1,
         "AWR": C.C2,
         "LRP": C.N1,
     }
     out.update(add)
-    L, i = sandy.read_list(df, i)
+    L, i = read_list(df, i)
     add = {
         "EG": np.array(L.B),
     }
@@ -307,13 +322,13 @@ def read_mf1(tape, mat):
 
 def read_mf3(tape, mat, mt):
     """
-    Parse MAT/MF=33/MT section from `sandy.Errorr` object and return
+    Parse MAT/MF=33/MT section from :obj:`~sandy.errorr.Errorr` object and return
     structured content in nested dcitionaries.
 
     Parameters
     ----------
-    tape : `sandy.Errorr`
-        endf6 object containing requested section
+    tape : :obj:`~sandy.errorr.Errorr`
+        ERRORR object containing requested section
     mat : `int`
         MAT number
     mt : `int`
@@ -332,7 +347,7 @@ def read_mf3(tape, mat, mt):
             "MT": mt,
             }
     i = 0
-    L, i = sandy.read_list(df, i)
+    L, i = read_list(df, i)
     add = {
         "XS": np.array(L.B),
     }
@@ -342,24 +357,30 @@ def read_mf3(tape, mat, mt):
 
 def read_mf33(tape, mat, mt, mf=33):
     """
-    Parse MAT/MF=33/MT section from `sandy.Errorr` object and return
+    Parse MAT/MF=33/MT section from :obj:`~sandy.errorr.Errorr` object and return
     structured content in nested dcitionaries.
 
     Parameters
     ----------
-    tape : `sandy.Errorr`
-        endf6 object containing requested section
+    tape : :obj:`~sandy.error.Errorr`
+        ERRORR object containing requested section
     mat : `int`
         MAT number
     mt : `int`
         MT number
     mf : `int`, optional
-        MF number. Default is 33.
+        MF number. Default is `33`.
+
+    Notes
+    -----
+    .. note: ERRORR sections for nubar and xs are all given by NJOY in `MF=33`.
+             For PFNS, `MF=35` is used.
+             Independently, all sections can be parse by this function.
 
     Returns
     -------
     out : `dict`
-        Content of the ENDF-6 tape structured as nested `dict`.
+        Content of the ERRORR tape structured as nested `dict`.
     """
     df = tape._get_section_df(mat, mf, mt)
     out = {
@@ -368,7 +389,7 @@ def read_mf33(tape, mat, mt, mf=33):
             "MT": mt,
             }
     i = 0
-    C, i = sandy.read_cont(df, i)
+    C, i = read_cont(df, i)
     add = {
         "ZA": C.C1,
         "AWR": C.C2,
@@ -376,12 +397,12 @@ def read_mf33(tape, mat, mt, mf=33):
     out.update(add)
     reaction_pairs = {}
     for rp in range(C.N2):  # number of reaction pairs
-        C, i = sandy.read_cont(df, i)
+        C, i = read_cont(df, i)
         MT1 = C.L2
         NG = C.N2
         M = np.zeros((NG, NG))
         while True:
-            L, i = sandy.read_list(df, i)
+            L, i = read_list(df, i)
             NGCOL = L.L1
             GROW = L.N2
             GCOL = L.L2
