@@ -3036,7 +3036,7 @@ class Endf6(_FormattedFile):
             # assume HL, BR and DE have all the same key matching (sample ids)
             for ismp, smp in smps.groupby("SMP"):
                 outs[ismp] = pool.apply_async(
-                    rdd_perturb_worker,
+                    fy_perturb_worker,
                     (
                         tape.data,
                         nfpy.data,
