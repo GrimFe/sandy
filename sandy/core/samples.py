@@ -73,8 +73,6 @@ def read_fy_samples(file='PERT_MF8_MT454.xlsx'):
     
     # same sorting structure as when it was produced in get_perturbations_fy
     smp = pd.concat(smp, ignore_index=True).sort_values(by=["ZAM", "E", "ZAP", "SMP"])
-    
-    # for some reasons get_perturbations_fy gives me this
 
     return smp
 
@@ -259,17 +257,14 @@ class Samples():
 
 
         In this example the original covariance contains data for MT=1 and MT=51.
-
         >>> endf6 = sandy.get_endf6_file('jeff_33', 'xs', 942400)
         >>> smps = endf6.get_perturbations(1, njoy_kws=dict(err=1, chi=False, mubar=False, nubar=False, errorr33_kws=dict(mt=[1, 51])))[33]
 
         Then, since MT=1 is redundant, samples are passed to its partial components (MT=2 and MT=3).
-
         >>> expected = pd.MultiIndex.from_product([[9440], [1, 51] + list(sandy.redundant_xs[1])], names=["MAT", "MT"])
         >>> assert next(smps.iterate_xs_samples())[1].columns.equals(expected)
         
         If case one of the partial components already has samples, i.e., MT=2...
-
         >>> endf6 = sandy.get_endf6_file('jeff_33', 'xs', 942400)
         >>> smps = endf6.get_perturbations(1, njoy_kws=dict(err=1, chi=False, mubar=False, nubar=False, errorr33_kws=dict(mt=[1, 2, 51])))[33]
 
@@ -278,6 +273,15 @@ class Samples():
 
         >>> expected = pd.MultiIndex.from_product([[9440], [1, 2, 51]], names=["MAT", "MT"])
         >>> assert next(smps.iterate_xs_samples())[1].columns.equals(expected)
+
+        Default use case for MF35.
+
+        >>> tape = sandy.get_endf6_file("jeff_33", "xs", 942390)
+        >>> smps = tape.get_perturbations(2, njoy_kws=dict(err=1, nubar=False, mubar=False))
+
+        Check that output is not empty, and with correct shape.
+
+        >>> assert(next(smps[35].iterate_xs_samples())[1].shape == (240, 5))
         """
         levels = Xs._columnsnames
         df = self.data.unstack(level=levels)
@@ -322,7 +326,8 @@ class Samples():
         foo = lambda x: smp.loc[:x].mean()
         return pd.DataFrame(map(foo, rng), index=rng)
 
-    def from_excel(file, beg=None, end=None):   # this should be corrected as a class method
+    @classmethod
+    def from_excel(cls, file, beg=None, end=None):
         """
         Read perturbation coefficients (for nubar and xs) from excel file.
         The file format is compatible with what written in
@@ -355,5 +360,4 @@ class Samples():
 
         df = df.iloc[:, loc+2:].loc[:, beg:end].reset_index(drop=True)
         df.index = idx
-        smp = Samples(df)
-        return smp
+        return cls(df)
