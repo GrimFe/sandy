@@ -18,7 +18,6 @@ from .njoy import *
 from .sections import *
 from .shared import *
 from .utils import *
-from .core import *
 # from .sampling import *  # don't do this
 from .spectra import *
 
