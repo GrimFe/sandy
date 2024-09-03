@@ -29,6 +29,7 @@ import sandy.shared
 import sandy.sampling
 
 from .samples import *
+from .records import *
 
 testdir = "tests"
 

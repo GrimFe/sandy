@@ -5,7 +5,7 @@ import logging
 from .core.endf6 import _FormattedFile
 from .core.cov import CategoryCov
 from .core.xs import Xs
-from .core.records import read_cont, read_list
+from .records import read_cont, read_list
 
 __author__ = "Luca Fiorito"
 __all__ = [
