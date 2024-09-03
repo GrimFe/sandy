@@ -159,7 +159,7 @@ class Errorr(_FormattedFile):
 
         Returns
         -------
-        :obj:`~sandy.core.cov.CategoryCov`
+        :obj:`~sandy.cov.CategoryCov`
             xs/nubar/pfns covariance matrix for all MAT/MT in ERRORR file.
 
         Examples
