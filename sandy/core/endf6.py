@@ -2495,7 +2495,7 @@ class Endf6(_FormattedFile):
         >>> assert np.corrcoef(data)[0, 1] > 0.9
         """
         
-        from .cov import CategoryCov              # lazy import to avoid circular import issue
+        from ..cov import CategoryCov              # lazy import to avoid circular import issue
         from ..fy import Fy, get_cea_fy           # lazy import to avoid circular import issue
         
         # if already available in kwargs, do not extract fission yields again

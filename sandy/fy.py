@@ -21,7 +21,7 @@ from os.path import join, dirname
 import re
 
 from .zam import ELEMENTS
-from .core.cov import CategoryCov, corr2cov
+from .cov import CategoryCov, corr2cov
 from .core.endf6 import Endf6
 from .sections.mf8 import write_mf8
 from .gls import _gls_parameters_update, ishikawa_factor
