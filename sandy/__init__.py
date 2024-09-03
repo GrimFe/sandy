@@ -33,6 +33,7 @@ from .records import *
 from .lpc import *
 from .cov import *
 from .endf6 import *
+from .xs import *
 
 testdir = "tests"
 
