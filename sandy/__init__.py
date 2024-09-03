@@ -30,6 +30,7 @@ import sandy.sampling
 
 from .samples import *
 from .records import *
+from .lpc import *
 
 testdir = "tests"
 
