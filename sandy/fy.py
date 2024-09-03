@@ -87,7 +87,7 @@ def get_cea_fy(zam, e=0.0253):
     fy : :obj:`~sandy.fy.Fy`
         Fission yield object containing independent fission yield data proposed
         by CEA for the thermal fission of the selected nuclide.
-    rcov : :obj:`~sandy.core.cov.CategoryCov`
+    rcov : :obj:`~sandy.cov.CategoryCov`
         Corresponding covariance matrix (relative) with ZAP as index and columns.
 
     Notes
@@ -786,8 +786,8 @@ class Fy():
         :obj:`~sandy.fy.Fy`
             `Fy` object updated with GLS for a given zam, energy, design
             sensitivity and new information.
-        :obj:`~sandy.core.cov.CategoryCov`
-            :obj:`~sandy.core.cov.CategoryCov` object corresponding to the updated covariance matrix
+        :obj:`~sandy.cov.CategoryCov`
+            :obj:`~sandy.cov.CategoryCov` object corresponding to the updated covariance matrix
             adjusted with the GLS technique.
 
         Notes
@@ -1019,7 +1019,7 @@ class Fy():
 
         Parameters
         ----------
-        endf6 : :obj:`~sandy.core.endf6.Endf6`
+        endf6 : :obj:`~sandy.endf6.Endf6`
             object containing the ENDF-6 text
         verbose : `bool`, optional, default is `False`
             flag to print information when reading ENDF-6 file
@@ -1078,12 +1078,12 @@ class Fy():
 
         Parameters
         ----------
-        `endf6` : :obj:`~sandy.core.endf6.Endf6`
+        `endf6` : :obj:`~sandy.endf6.Endf6`
             ENDF6 object.
 
         Returns
         -------
-        :obj:`~sandy.core.endf6.Endf6`
+        :obj:`~sandy.endf6.Endf6`
             ENDF6 objects with updated IFY and CFY.
 
         Examples
