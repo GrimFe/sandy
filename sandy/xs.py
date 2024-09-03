@@ -53,13 +53,13 @@ class Xs():
     custom_perturbation
         Apply a custom perturbation to a given cross section.
     from_endf6
-        Extract cross sections/nubar from :obj:`~sandy.core.endf6.Endf6` instance.
+        Extract cross sections/nubar from :obj:`~sandy.endf6.Endf6` instance.
     perturb
         
     reshape
         Interpolate cross sections over new grid structure.
     to_endf6
-        Update cross sections in :obj:`~sandy.core.endf6.Endf6` instance.
+        Update cross sections in :obj:`~sandy.endf6.Endf6` instance.
     """
 
     redundant_xs = {
@@ -145,7 +145,7 @@ class Xs():
 
         Returns
         -------
-        :obj:`~sandy.core.xs.Xs`
+        :obj:`~sandy.xs.Xs`
             Cross section instance over new grid.
 
         Warnings
@@ -181,7 +181,7 @@ class Xs():
 
         Returns
         -------
-        :obj:`~sandy.core.xs.Xs`
+        :obj:`~sandy.xs.Xs`
             Cross section instance with given series MAT/MT perturbed.
         """
         if (mat, mt) not in self.data:
@@ -198,24 +198,24 @@ class Xs():
 
     def to_endf6(self, endf6):
         """
-        Update cross sections in :obj:`~sandy.core.endf6.Endf6` instance with those available in a
-        :obj:`~sandy.core.xs.Xs` instance.
+        Update cross sections in :obj:`~sandy.endf6.Endf6` instance with those available in a
+        :obj:`~sandy.xs.Xs` instance.
 
         .. warning:: only xs with `(MAT,MT)` combinations that are originally
-                     present in the :obj:`~sandy.core.endf6.Endf6` instance are modififed, the others
+                     present in the :obj:`~sandy.endf6.Endf6` instance are modififed, the others
                      are discarded.
                      The reason behind this is that to reconstruct a ENDF6
-                     section we need info that is not available in the :obj:`~sandy.core.xs.Xs`
+                     section we need info that is not available in the :obj:`~sandy.xs.Xs`
                      instance itself.
 
         Parameters
         ----------
-        `endf6` : :obj:`~sandy.core.endf6.Endf6`
+        `endf6` : :obj:`~sandy.endf6.Endf6`
             ENDF6 object.
 
         Returns
         -------
-        endf6new : :obj:`~sandy.core.endf6.Endf6`
+        endf6new : :obj:`~sandy.endf6.Endf6`
             ENDF6 object with updated xs.
         """
         endf6new = self._xs_to_endf6(endf6)
@@ -265,7 +265,7 @@ class Xs():
     @classmethod
     def from_endf6(cls, endf6):
         """
-        Extract cross sections from :obj:`~sandy.core.endf6.Endf6` instance.
+        Extract cross sections from :obj:`~sandy.endf6.Endf6` instance.
 
         .. note:: Xs are linearized on a unique grid.
 
@@ -277,12 +277,12 @@ class Xs():
 
         Parameters
         ----------
-        `endf6` : :obj:`~sandy.core.endf6.Endf6`
+        `endf6` : :obj:`~sandy.endf6.Endf6`
             ENDF6 object.
 
         Returns
         -------
-        :obj:`~sandy.core.xs.Xs`
+        :obj:`~sandy.xs.Xs`
             Xs tabulated data.
 
         Raises
@@ -375,7 +375,7 @@ class Xs():
         """
         Reconstruct redundant xs according to ENDF-6 rules in Appendix B.
         Redundant cross sections are available in `dict`
-        :obj:`~sandy.core.xs.redundant_xs`.
+        :obj:`~sandy.xs.redundant_xs`.
 
         Parameters
         ----------
@@ -385,7 +385,7 @@ class Xs():
 
         Returns
         -------
-        :obj:`~sandy.core.xs.Xs`
+        :obj:`~sandy.xs.Xs`
             Cross section instance where reconstruction rules are enforced.
 
         Examples
@@ -464,7 +464,7 @@ class Xs():
 
         Returns
         -------
-        xs : :obj:`~sandy.core.xs.Xs` or `dict` of :obj:`~sandy.core.xs.Xs`
+        xs : :obj:`~sandy.xs.Xs` or `dict` of :obj:`~sandy.xs.Xs`
             perturbed cross section object if `s` is a `pd.DataFrame`,
             otherwise dictionary of perturbed cross section objects with
             sample numbers as key.
@@ -538,7 +538,7 @@ class Xs():
 
         Returns
         -------
-        :obj:`~sandy.core.xs.Xs`
+        :obj:`~sandy.xs.Xs`
             Dataframe of cross sections in ERRORR file.
         """
         mat = errorr.mat[0]
