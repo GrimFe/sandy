@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import logging
 
-from .core.endf6 import _FormattedFile
+from .endf6 import _FormattedFile
 from .cov import CategoryCov
 from .core.xs import Xs
 from .records import read_cont, read_list

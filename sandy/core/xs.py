@@ -10,7 +10,7 @@ import functools
 import numpy as np
 import pandas as pd
 
-from .endf6 import Endf6
+from ..endf6 import Endf6
 from ..shared import reshape_differential
 from ..sections.mf1 import write_mf1
 from ..sections.mf3 import write_mf3

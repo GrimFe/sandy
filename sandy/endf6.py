@@ -2495,8 +2495,8 @@ class Endf6(_FormattedFile):
         >>> assert np.corrcoef(data)[0, 1] > 0.9
         """
         
-        from ..cov import CategoryCov              # lazy import to avoid circular import issue
-        from ..fy import Fy, get_cea_fy           # lazy import to avoid circular import issue
+        from .cov import CategoryCov              # lazy import to avoid circular import issue
+        from .fy import Fy, get_cea_fy           # lazy import to avoid circular import issue
         
         # if already available in kwargs, do not extract fission yields again
         nfpy = kwargs.get("nfpy")
@@ -2993,7 +2993,7 @@ class Endf6(_FormattedFile):
         >>> with pytest.raises(Exception):
         ...    tape.apply_perturbations_fy(smps, verbose=False, to_file=True)
         """
-        from ..fy import Fy
+        from .fy import Fy
 
         # --- PRE-PROCESSING
         # Get nominal fission yield data. pop it or it will be given twice to fy_perturb_worker
@@ -3455,7 +3455,7 @@ def fy_perturb_worker(endf6, fy, smps, ismp,
     >>> p = smps.query("ZAM==922350 and SMP==0").VALS
     >>> np.testing.assert_array_almost_equal(p, sp, decimal=4)
     """
-    from ..fy import Fy  # lazy import to avoid circular import issue
+    from .fy import Fy  # lazy import to avoid circular import issue
     endf6_ = Endf6(endf6.copy())  # this was a dictionary
     fy_ = Fy(fy.copy())    # this was a dataframe
 

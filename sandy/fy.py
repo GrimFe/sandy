@@ -22,7 +22,7 @@ import re
 
 from .zam import ELEMENTS
 from .cov import CategoryCov, corr2cov
-from .core.endf6 import Endf6
+from .endf6 import Endf6
 from .sections.mf8 import write_mf8
 from .gls import _gls_parameters_update, ishikawa_factor
 from .shared import expand_zam

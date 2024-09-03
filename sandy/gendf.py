@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 import sandy
-from sandy.core.endf6 import _FormattedFile
+from sandy.sandy.endf6 import _FormattedFile
 
 __author__ = "Luca Fiorito"
 __all__ = [
