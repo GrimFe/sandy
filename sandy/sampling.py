@@ -2,12 +2,13 @@ import os
 import time
 import logging
 import argparse
-import filecmp
-import pandas as pd
 import subprocess as sp
 
-import sandy
-from sandy.tools import is_valid_file
+from .endf6 import Endf6
+from .tools import is_valid_file
+from .utils import get_seed
+from .samples import Samples
+from . import __version__
 
 
 __author__ = "Luca Fiorito"
@@ -126,28 +127,28 @@ def parse(iargs=None):
 
     parser.add_argument('--seed31',
                         type=int,
-                        default=sandy.get_seed(),
+                        default=get_seed(),
                         metavar="S31",
                         help="seed for random sampling of MF31 covariance "
                              "matrix (default = random)")
 
     parser.add_argument('--seed33',
                         type=int,
-                        default=sandy.get_seed(),
+                        default=get_seed(),
                         metavar="S33",
                         help="seed for random sampling of MF33 covariance "
                              "matrix (default = random)")
 
     parser.add_argument('--seed34',
                         type=int,
-                        default=sandy.get_seed(),
+                        default=get_seed(),
                         metavar="S34",
                         help="seed for random sampling of MF34 covariance "
                              "matrix (default = random)")
 
     parser.add_argument('--seed35',
                         type=int,
-                        default=sandy.get_seed(),
+                        default=get_seed(),
                         metavar="S35",
                         help="seed for random sampling of MF35 covariance "
                              "matrix (default = random)")
@@ -168,7 +169,7 @@ def parse(iargs=None):
 
     parser.add_argument("--version", "-v",
                         action='version',
-                        version='%(prog)s {}'.format(sandy.__version__),
+                        version='%(prog)s {}'.format(__version__),
                         help="SANDY's version.")
 
     init = parser.parse_known_args(args=iargs)[0]
@@ -185,28 +186,36 @@ def multi_run(foo):
     Examples
     --------
     Test that `minimal_processing` filters unwanted modules.
+    
+    >>> import sandy, filecmp
+    >>> import pandas as pd
     >>> g = sandy.get_endf6_file("jeff_33", "xs", 10010).get_gendf(err=1, minimal_processing=True, temperature=300, dryrun=True)
     >>> assert "broadr" in g and "reconr" in g
     >>> assert "thermr" not in g and "purr" not in g and "heatr" not in g and "unresr" not in g and "gaspr" not in g
 
     Test `minimal_processing=False`.
+
     >>> g = sandy.get_endf6_file("jeff_33", "xs", 10010).get_gendf(err=1, temperature=300, dryrun=True)
     >>> assert "broadr" in g and "reconr" in g
     >>> assert "thermr" in g and "purr" in g and "heatr" in g and "gaspr" in g
 
     Check that for `temperature=0` the calculation stops after RECONR.
+
     >>> g = sandy.get_endf6_file("jeff_33", "xs", 10010).get_gendf(err=1, dryrun=True)
     >>> assert "reconr" in g
     >>> assert "broadr" not in g and "thermr" not in g and "purr" not in g and "heatr" not in g and "unresr" not in g and "gaspr" not in g
 
     Retrieve ENDF-6 tape and write it to file.
+
     >>> sandy.get_endf6_file("jeff_33", "xs", 10010).to_file("H1.jeff33")
 
     Produce perturbed ACE file.
+
     >>> cli = "H1.jeff33 --acer True --samples 2 --processes 2 --temperatures 900 --seed33 5"
     >>> sandy.sampling.run(cli.split())
 
     Check if ACE and XSDIR files have the right content.
+
     >>> assert "1001.09c" in open("1001_0.09c").read()
     >>> assert "1001.09c" in open("1001_0.09c.xsd").read()
     >>> assert "1001.09c" in open("1001_1.09c").read()
@@ -214,16 +223,19 @@ def multi_run(foo):
     >>> assert not filecmp.cmp("1001_0.09c", "1001_1.09c", shallow=False)
 
     Run the same on a single process.
+
     >>> cli = "H1.jeff33 --acer True --samples 2 --processes 2 --temperatures 900 --seed33 5 --outname={ZAM}_{SMP}_SP"
     >>> sandy.sampling.run(cli.split())
 
     The identical seed ensures consistent results with the previous run.
+
     >>> assert filecmp.cmp("1001_0.09c", "10010_0_SP.09c")
     >>> assert filecmp.cmp("1001_1.09c", "10010_1_SP.09c")
     >>> assert filecmp.cmp("1001_0.09c.xsd", "10010_0_SP.09c.xsd")
     >>> assert filecmp.cmp("1001_1.09c.xsd", "10010_1_SP.09c.xsd")
 
     Produce perturbed ENDF6 and PENDF files.
+
     >>> cli = "H1.jeff33 --samples 2 --processes 2 --outname=H1_{MAT}_{SMP} --mt 102"
     >>> sandy.sampling.run(cli.split())
     >>> assert os.path.getsize("H1_125_0.pendf") > 0 and os.path.getsize("H1_125_1.pendf") > 0
@@ -231,8 +243,9 @@ def multi_run(foo):
     >>> assert filecmp.cmp("H1_125_0.endf6", "H1_125_1.endf6")
     >>> assert filecmp.cmp("H1_125_0.endf6", "H1.jeff33")
     
-    Let's see how the sampling process can be interrupted fater
+    Let's see how the sampling process can be interrupted fater.
     Produce random ENDF-6 and PENDF files for Pu-241 with the standard procedure.
+
     >>> file = "942410.jeff33"
     >>> sandy.get_endf6_file("jeff_33", "xs", 942410).to_file(file)
     >>> cl = f"{file}" + " --samples 2 -O {SMP}-{ZAM} --seed33 1 --seed31 1 --mt33 2"
@@ -240,9 +253,11 @@ def multi_run(foo):
 
     Now, let's interrupt the process after that the perturbations are
     created (reproducible with fixed seed).
+
     >>> smps = sandy.sampling.run((cl + " --only_perturbations").split())
 
     We can read these perturbation coefficients without the need of regenerating them.
+
     >>> cl = f"{file} --from_perturbations {os.getcwd()} 1 1 --only_perturbations"
     >>> smps2 = sandy.sampling.run(cl.split())
     >>> assert smps2[33].data.shape[1] == smps2[31].data.shape[1] == 1
@@ -253,12 +268,14 @@ def multi_run(foo):
 
     Using the perturbation coefficients from the excel files we generate the
     same random files of the standard pipeline.
+
     >>> cl = f"{file}" + " -O new_{SMP}-{ZAM} " + f"--from_perturbations {os.getcwd()} 1 1"
     >>> sandy.sampling.run(cl.split())
     >>> assert filecmp.cmp("new_1-942410.endf6", "1-942410.endf6")
     >>> assert filecmp.cmp("new_1-942410.pendf", "1-942410.pendf")
 
     If no perturbation file exist, the calculation stops.
+
     >>> file = "741840.jeff33"
     >>> sandy.get_endf6_file("jeff_33", "xs", 741840).to_file(file)
     >>> cl = f"{file} --from_perturbations {os.getcwd()} 1 1 --only_perturbations"
@@ -284,7 +301,6 @@ def running_time(foo):
     """
     Decorator to handle keyword arguments for NJOY before running
     the executable.
-
     """
     def inner(*args, **kwargs):
         t0 = time.time()
@@ -326,6 +342,7 @@ def run(iargs):
     --------
     Default use case for decay data sampling.
 
+    >>> import sandy
     >>> sandy.get_endf6_file("jeff_33", "decay", [10010, 10040, 270600]).to_file("AAA.txt")
     >>> sandy.sampling.run("AAA.txt --samples 3 --processes 1".split())
     >>> assert {'decay_data_0', 'decay_data_1', 'decay_data_2'}.issubset(set(glob.glob("decay_data*")))
@@ -347,7 +364,7 @@ def run(iargs):
     if iargs.debug:
         err_errorr = err_ace = err_pendf = 1
 
-    endf6 = sandy.Endf6.from_file(iargs.file)
+    endf6 = Endf6.from_file(iargs.file)
     
     if 457 in endf6.mt:
         # very dirty way to add decay data sampling from command line interface
@@ -399,7 +416,7 @@ def run(iargs):
         for mf in [31, 33, 34, 35]:
             xls = file.format(ID, mf)
             if os.path.isfile(xls):
-                smps[mf] = sandy.Samples.from_excel(xls, beg=beg, end=end)
+                smps[mf] = Samples.from_excel(xls, beg=beg, end=end)
         if not smps:
             logging.warning(f"No perturbation file was found for {ID}")
 
