@@ -13,7 +13,7 @@ Function `write_mf5` writes a content object for a MF5/MT section into a
 string.
 MAT, MF, MT and line numbers are also added (each line ends with a `\n`).
 """
-from ..core.records import read_cont, read_tab1, read_tab2, write_cont, write_eol, write_tab1, write_tab2
+from ..records import read_cont, read_tab1, read_tab2, write_cont, write_eol, write_tab1, write_tab2
 
 __author__ = "Luca Fiorito"
 __all__ = [

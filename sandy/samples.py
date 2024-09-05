@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from .core.xs import Xs, redundant_xs
+from .xs import Xs, redundant_xs
 
 __author__ = "Luca Fiorito"
 __all__ = [
@@ -13,7 +13,7 @@ __all__ = [
 def read_fy_samples(file='PERT_MF8_MT454.xlsx'):
     """
     Read relative perturbations for fission yields from excel file produced by
-    :obj:`~sandy.core.endf6.Endf6.get_perturbations_fy`.
+    :obj:`~sandy.endf6.Endf6.get_perturbations_fy`.
 
     Parameters
     ----------
@@ -40,7 +40,7 @@ def read_fy_samples(file='PERT_MF8_MT454.xlsx'):
 
     Notes
     -----
-    .. note:: This does not use the object :obj:`~sandy.core.samples.Samples`.
+    .. note:: This does not use the object :obj:`~sandy.samples.Samples`.
 
 
     Examples
@@ -102,7 +102,7 @@ class Samples():
     get_rstd
         Return relative standard deviation vector of samples.   
     iterate_xs_samples
-        Generator that iterates over each sample (in the form of :obj:`~sandy.core.xs.Xs`).
+        Generator that iterates over each sample (in the form of :obj:`~sandy.xs.Xs`).
     """
 
     _columnsname = "SMP"
@@ -177,10 +177,10 @@ class Samples():
 
     def iterate_xs_samples(self):
         """
-        Iterate samples one by one and shape them as a :obj:`~sandy.core.xs.Xs`
+        Iterate samples one by one and shape them as a :obj:`~sandy.xs.Xs`
         dataframe, but with mutligroup structure.
-        This output should be passed to :obj:`~sandy.core.xs.Xs._perturb`.
-        The function is called by :obj:`~sandy.core.endf6..Endf6.apply_perturbations`.
+        This output should be passed to :obj:`~sandy.xs.Xs._perturb`.
+        The function is called by :obj:`~sandy.endf6..Endf6.apply_perturbations`.
 
         Yields
         ------
@@ -344,7 +344,7 @@ class Samples():
 
         Returns
         -------
-        smp : :obj:`~sandy.core.samples.Samples`
+        smp : :obj:`~sandy.samples.Samples`
             Samples dataframe.
         """
         df = pd.read_excel(file, sheet_name="SMP")

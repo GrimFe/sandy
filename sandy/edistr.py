@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 from .pert import Pert
-from .core.endf6 import Endf6
+from .endf6 import Endf6
 from .sections.mf5 import write_mf5
 
 __author__ = "Luca Fiorito"
@@ -542,17 +542,17 @@ class Edistr():
 
     def to_endf6(self, endf6):
         """
-        Update cross sections in :obj:`~sandy.core.endf6.Endf6` instance with those available in a
+        Update cross sections in :obj:`~sandy.endf6.Endf6` instance with those available in a
         :obj:`~sandy.edistr.Edistr` instance.
 
         Parameters
         ----------
-        `endf6` : :obj:`~sandy.core.endf6.Endf6`
+        `endf6` : :obj:`~sandy.endf6.Endf6`
             ENDF6 object.
 
         Returns
         -------
-        endf6new : :obj:`~sandy.core.endf6.Endf6`
+        endf6new : :obj:`~sandy.endf6.Endf6`
             ENDF6 object with updated xs.
 
         Examples

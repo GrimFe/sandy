@@ -254,8 +254,8 @@ def get_endf6_file(library, kind, zam, to_file=False):
 
     Returns
     -------
-    :obj:`~sandy.core.endf6.Endf6`
-        :obj:`~sandy.core.endf6.Endf6` object with ENDF-6 data for specified library and nuclide.
+    :obj:`~sandy.endf6.Endf6`
+        :obj:`~sandy.endf6.Endf6` object with ENDF-6 data for specified library and nuclide.
 
     Examples
     --------
@@ -1393,16 +1393,16 @@ class _FormattedFile():
 class Endf6(_FormattedFile):
     """
     Container for ENDF-6 file text grouped by MAT, MF and MT numbers.
-    Source data is found in attribute :obj:`~sandy.core.endf6.Endf6.data`.
+    Source data is found in attribute :obj:`~sandy.endf6.Endf6.data`.
 
     Methods
     -------
     get_ace
-        Process :obj:`~sandy.core.endf6.Endf6` instance into an ACE file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into an ACE file using NJOY.
     get_pendf
-        Process :obj:`~sandy.core.endf6.Endf6` instance into a PENDF file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into a PENDF file using NJOY.
     get_errorr
-        Process :obj:`~sandy.core.endf6.Endf6` instance into a ERRORR file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into a ERRORR file using NJOY.
     get_id
         Extract ID for a given MAT for a ENDF-6 file.
     get_records
@@ -1426,8 +1426,8 @@ class Endf6(_FormattedFile):
 
         Returns
         -------
-        :obj:`~sandy.core.endf6.Endf6`
-            :obj:`~sandy.core.endf6.Endf6` instance with updated MF1/MT451.
+        :obj:`~sandy.endf6.Endf6`
+            :obj:`~sandy.endf6.Endf6` instance with updated MF1/MT451.
 
         
         Examples
@@ -1760,13 +1760,13 @@ class Endf6(_FormattedFile):
     @_handle_njoy_inputs
     def get_ace(self, suffix=None, pendf=None, **kwargs):
         """
-        Process :obj:`~sandy.core.endf6.Endf6` instance into an ACE file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into an ACE file using NJOY.
 
         Parameters
         ----------
         dryrun : `bool`, optional
             Do not run NJOY and return only NJOY input. Default is `False`.
-        pendf : :obj:`~sandy.core.endf6.Endf6`, optional
+        pendf : :obj:`~sandy.endf6.Endf6`, optional
             Provide PENDF object and add it to the processing
             sequence after RECONR and before BROADR. Default is `None`.
         suffix : `str`, optional
@@ -1848,7 +1848,7 @@ class Endf6(_FormattedFile):
     @_handle_njoy_inputs
     def get_pendf(self, **kwargs,):
         """
-        Process :obj:`~sandy.core.endf6.Endf6` instance into a PENDF file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into a PENDF file using NJOY.
 
         Parameters
         ----------
@@ -1857,7 +1857,7 @@ class Endf6(_FormattedFile):
 
         Returns
         -------
-        pendf : :obj:`~sandy.core.endf6.Endf6`
+        pendf : :obj:`~sandy.endf6.Endf6`
             PENDF object.
 
         Examples
@@ -1888,7 +1888,7 @@ class Endf6(_FormattedFile):
     @_handle_groupr_inputs
     def get_gendf(self, **kwargs,):
         """
-        Process :obj:`~sandy.core.endf6.Endf6` instance into a GENDF file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into a GENDF file using NJOY.
 
         Parameters
         ----------
@@ -1993,7 +1993,7 @@ class Endf6(_FormattedFile):
                    **kwargs,
                    ):
         """
-        Process :obj:`~sandy.core.endf6.Endf6` instance into a ERRORR file using NJOY.
+        Process :obj:`~sandy.endf6.Endf6` instance into a ERRORR file using NJOY.
 
         Parameters
         ----------
@@ -2020,7 +2020,7 @@ class Endf6(_FormattedFile):
 
         Notes
         -----
-        .. note:: Method arguments are consistent with those of :obj:`~sandy.core.endf6.Endf6.get_pendf`.
+        .. note:: Method arguments are consistent with those of :obj:`~sandy.endf6.Endf6.get_pendf`.
 
         Examples
         --------
@@ -2256,14 +2256,14 @@ class Endf6(_FormattedFile):
             Keyword arguments to produce ERRORR file.
             The default is {}.
         smp_kws : `dict`, optional
-            Keyword arguments for :obj:`~sandy.core.cov.CategoryCov.sampling`.
+            Keyword arguments for :obj:`~sandy.cov.CategoryCov.sampling`.
             The default is {}.
         **kwargs : `dict`
             additional keyword arguments.
 
         Returns
         -------
-        smp : `dict` of :obj:`~sandy.core.samples.Samples`
+        smp : `dict` of :obj:`~sandy.samples.Samples`
             Dictionary with sample objects.
             The dictionary keys are `31` and `33`, respectively for cross
             sections and nubar.
@@ -2329,13 +2329,13 @@ class Endf6(_FormattedFile):
         nsmp : `int`
             Sample size.
         smp_hl_kws : `dict`, optional
-            Keyword arguments for :obj:`~sandy.core.cov.CategoryCov.sampling` for half-lives.
+            Keyword arguments for :obj:`~sandy.cov.CategoryCov.sampling` for half-lives.
             The default is {}.
         smp_de_kws : `dict`, optional
-            Keyword arguments for :obj:`~sandy.core.cov.CategoryCov.sampling` for decay energies.
+            Keyword arguments for :obj:`~sandy.cov.CategoryCov.sampling` for decay energies.
             The default is {}.
         smp_br_kws : `dict`, optional
-            Keyword arguments for :obj:`~sandy.core.cov.CategoryCov.sampling` for branching ratios.
+            Keyword arguments for :obj:`~sandy.cov.CategoryCov.sampling` for branching ratios.
             The default is {}.
         fill_zeros : `float`, optional
             Some decay energy and half-life data carry zero uncertainty in the evaluation.
@@ -2355,7 +2355,7 @@ class Endf6(_FormattedFile):
 
         Returns
         -------
-        smp : `dict` of :obj:`~sandy.core.samples.Samples`
+        smp : `dict` of :obj:`~sandy.samples.Samples`
             Dictionary with sample objects.
             The dictionary keys are `'HL'`, `'DE'` and `'BR'`, respectively for
             half-lives, decay energies and bramching ratios.
@@ -2439,7 +2439,7 @@ class Endf6(_FormattedFile):
         nsmp : `int`
             Sample size.
         smp_kws : `dict`, optional
-            Keyword arguments for :obj:`~sandy.core.cov.CategoryCov.sampling`.
+            Keyword arguments for :obj:`~sandy.cov.CategoryCov.sampling`.
             The default is {}.
         covariance : `None` or `str`, optional
             Flag to adopt fission yield covariance matrices.
@@ -2461,9 +2461,9 @@ class Endf6(_FormattedFile):
                 - ZAP: fission product
                 - SMP: sample ID
             
-            .. note:: This is different from :obj:`~sandy.core.endf6.Endf6.get_perturbations_xs`
-                      and :obj:`~sandy.core.endf6.Endf6.get_perturbations_rdd`, which return
-                      a :obj:`~sandy.core.samples.Samples` instance.
+            .. note:: This is different from :obj:`~sandy.endf6.Endf6.get_perturbations_xs`
+                      and :obj:`~sandy.endf6.Endf6.get_perturbations_rdd`, which return
+                      a :obj:`~sandy.samples.Samples` instance.
 
         Examples
         --------
@@ -2496,7 +2496,7 @@ class Endf6(_FormattedFile):
         """
         
         from .cov import CategoryCov              # lazy import to avoid circular import issue
-        from ..fy import Fy, get_cea_fy           # lazy import to avoid circular import issue
+        from .fy import Fy, get_cea_fy           # lazy import to avoid circular import issue
         
         # if already available in kwargs, do not extract fission yields again
         nfpy = kwargs.get("nfpy")
@@ -2588,17 +2588,17 @@ class Endf6(_FormattedFile):
         
         Parameters
         ----------
-        smps : `dict` of :obj:`~sandy.core.samples.Samples` instances
+        smps : `dict` of :obj:`~sandy.samples.Samples` instances
             Relative perturbation coefficients.
         processes : `int`, optional, default is `1`
             Number of processes used to complete the task.
             Creation of perturbed PENDF files and conversion to ACE 
             format is done in parallel if `processes>1`.
-        pendf : :obj:`~sandy.core.endf6.Endf6` instance, optional, default is `None`
+        pendf : :obj:`~sandy.endf6.Endf6` instance, optional, default is `None`
             If given apply pertubrations to provided instance, or else generate
             a pendf file from `self` (more time consuming).
         njoy_kws : `dict`
-            Keyword arguments passed to :obj:`~sandy.core.endf6.Endf6.get_pendf`
+            Keyword arguments passed to :obj:`~sandy.endf6.Endf6.get_pendf`
             to produce PENDF file.
         **kwargs : `dict`
             Keyword argument to produce ACE file plus keyword arguments
@@ -2795,13 +2795,13 @@ class Endf6(_FormattedFile):
     def apply_perturbations_rdd(self, smps, processes=1, **kwargs):
         """
         Apply relative perturbations to the data contained in
-        :obj:`~sandy.core.endf6.Endf6` instance of radioactive decay data files.
+        :obj:`~sandy.endf6.Endf6` instance of radioactive decay data files.
 
         Parameters
         ----------
-        smps : `dict` of :obj:`~sandy.core.samples.Samples`
+        smps : `dict` of :obj:`~sandy.samples.Samples`
             Dictionary with sample objects.
-            See output of :obj:`~sandy.core.endf6.Endf6.get_perturbations_rdd`
+            See output of :obj:`~sandy.endf6.Endf6.get_perturbations_rdd`
         processes : `int`, optional, default is `1`
             Number of processes used to complete the task.
             Creation of ENDF6 files and post-processing is done in parallel if
@@ -2810,14 +2810,14 @@ class Endf6(_FormattedFile):
             Additional keyword arguments, such as:
                 - `rdd`: to pass directly an already processed :obj:`~sandy.decay.DecayData` instance.
                 - `verbose`: to activate output verbosity.
-                - `to_file`: to write output :obj:`~sandy.core.endf6.Endf6` instances to file.
+                - `to_file`: to write output :obj:`~sandy.endf6.Endf6` instances to file.
 
         Returns
         -------
-        outs : `dict` of :obj:`~sandy.core.endf6.Endf6` or `dict` of `str`
+        outs : `dict` of :obj:`~sandy.endf6.Endf6` or `dict` of `str`
             Depending on whether keyword argument `to_file` is given or not:
                 - `to_file=True`: `dict` with filenames, sample ID's are keys
-                - `to_file=False`: `dict` with :obj:`~sandy.core.endf6.Endf6` instances, sample ID's are keys
+                - `to_file=False`: `dict` with :obj:`~sandy.endf6.Endf6` instances, sample ID's are keys
 
         Notes
         -----
@@ -2923,13 +2923,13 @@ class Endf6(_FormattedFile):
     def apply_perturbations_fy(self, smps, processes=1, covariance=None, **kwargs):
         """
         Apply relative perturbations to the data contained in
-        :obj:`~sandy.core.endf6.Endf6` instance of fission yield files.
+        :obj:`~sandy.endf6.Endf6` instance of fission yield files.
 
         Parameters
         ----------
         smps : `pd.DataFrame`
             Fission yield sample object.
-            See output of :obj:`~sandy.core.endf6.Endf6.get_perturbations_fy`.
+            See output of :obj:`~sandy.endf6.Endf6.get_perturbations_fy`.
             See also :obj:`~sandy`
         processes : `int`, optional, default is `1`
             Number of processes used to complete the task.
@@ -2945,14 +2945,14 @@ class Endf6(_FormattedFile):
             Additional keyword arguments, such as:
                 - `nfpy`: to pass directly an already processed :obj:`~sandy.fy.Fy` instance.
                 - `verbose`: to activate output verbosity.
-                - `to_file`: to write output :obj:`~sandy.core.endf6.Endf6` instances to file.
+                - `to_file`: to write output :obj:`~sandy.endf6.Endf6` instances to file.
 
         Returns
         -------
-        outs : `dict` of :obj:`~sandy.core.endf6.Endf6` or `dict` of `str`
+        outs : `dict` of :obj:`~sandy.endf6.Endf6` or `dict` of `str`
             Depending on whether keyword argument `to_file` is given or not:
                 - `to_file=True`: `dict` with filenames, sample ID's are keys
-                - `to_file=False`: `dict` with :obj:`~sandy.core.endf6.Endf6` instances, sample ID's are keys
+                - `to_file=False`: `dict` with :obj:`~sandy.endf6.Endf6` instances, sample ID's are keys
 
         Notes
         -----
@@ -2993,7 +2993,7 @@ class Endf6(_FormattedFile):
         >>> with pytest.raises(Exception):
         ...    tape.apply_perturbations_fy(smps, verbose=False, to_file=True)
         """
-        from ..fy import Fy
+        from .fy import Fy
 
         # --- PRE-PROCESSING
         # Get nominal fission yield data. pop it or it will be given twice to fy_perturb_worker
@@ -3074,29 +3074,29 @@ def endf6_perturb_worker(e6, pendf, ismp,
     Parameters
     ----------
     e6 : `dict`
-        `data` attribute of :obj:`~sandy.core.endf6.Endf6`.
+        `data` attribute of :obj:`~sandy.endf6.Endf6`.
         It contains the nominal ENDF6 data.
     pendf : `dict`
-        `data` attribute of :obj:`~sandy.core.endf6.Endf6`.
+        `data` attribute of :obj:`~sandy.endf6.Endf6`.
         It contains the nominal PENDF data.
     ismp : `int`
         sample ID.
     pxs : `pd.DataFrame`
         It contains the perturbation coefficients for cross section.
         It corresponds to one single sample (in principle the one with ID `ismp`).
-        It should have the same structure as a :obj:`~sandy.core.xs.Xs` object.
+        It should have the same structure as a :obj:`~sandy.xs.Xs` object.
         The default is `None`.
     pnu: `pd.DataFrame`
         It contains the perturbation coefficients for nubar.
         It corresponds to one single sample (in principle the one with ID `ismp`).
-        It should have the same structure as a :obj:`~sandy.core.xs.Xs` object.
+        It should have the same structure as a :obj:`~sandy.xs.Xs` object.
         The default is `None`.
     plpc: `pd.DataFrame`
         Not implemented.
     pchi: `pd.DataFrame`
         It contains the perturbation coefficients for chi.
         It corresponds to one single sample (in principle the one with ID `ismp`).
-        It should have the same structure as a :obj:`~sandy.core.xs.Xs` object.
+        It should have the same structure as a :obj:`~sandy.xs.Xs` object.
         The default is `None`.
     verbose : `bool`, optional
         Flag to activate verbosity. The default is `False`.
@@ -3118,8 +3118,8 @@ def endf6_perturb_worker(e6, pendf, ismp,
         
         - if `to_file=False`: a `dict` with keys, values:
             
-            - `endf6`: a perturbed :obj:`~sandy.core.endf6.Endf6` instance of the given ENDF6
-            - `pendf`: a perturbed :obj:`~sandy.core.endf6.Endf6` instance of the given PENDF
+            - `endf6`: a perturbed :obj:`~sandy.endf6.Endf6` instance of the given ENDF6
+            - `pendf`: a perturbed :obj:`~sandy.endf6.Endf6` instance of the given PENDF
 
         - if `to_file=True`: a `dict` with keys, values:
 
@@ -3147,7 +3147,7 @@ def endf6_perturb_worker(e6, pendf, ismp,
     >>> tape = sandy.get_endf6_file("jeff_33", "xs", 942390)
     >>> pendf = tape.get_pendf(err=1)
     >>> er = sandy.Edistr.from_endf6(tape)
-    >>> perturbed = sandy.core.endf6.endf6_perturb_worker(tape.data, pendf.data, 0, pchi=dict(smps.iterate_xs_samples())[0])
+    >>> perturbed = sandy.endf6.endf6_perturb_worker(tape.data, pendf.data, 0, pchi=dict(smps.iterate_xs_samples())[0])
     >>> e0 = sandy.Edistr.from_endf6(sandy.Endf6(perturbed['endf6']))
 
     Test that the perturbation is correct and happened below `ethresh` only.
@@ -3170,14 +3170,14 @@ def endf6_perturb_worker(e6, pendf, ismp,
     >>> idx = pd.MultiIndex.from_frame(idx)
     >>> smp = sandy.Samples([[1.2]], index=idx)
 
-    Creation of reference and perturbed :obj:`~sandy.core.xs.Xs`.
+    Creation of reference and perturbed :obj:`~sandy.xs.Xs`.
     
     >>> tape = sandy.get_endf6_file("jeff_33", "xs", 10010)
     >>> pendf = tape.get_pendf(err=1)
     >>> xs = sandy.Xs.from_endf6(pendf)
     
     >>> pxs = dict(smp.iterate_xs_samples())
-    >>> outs = sandy.core.endf6.endf6_perturb_worker(tape.data, pendf.data, 0, pxs=pxs[0])
+    >>> outs = sandy.endf6.endf6_perturb_worker(tape.data, pendf.data, 0, pxs=pxs[0])
     >>> xs0 = sandy.Xs.from_endf6(sandy.Endf6(outs["pendf"]))
 
     Test that the perturbation is correct.
@@ -3213,7 +3213,7 @@ def endf6_perturb_worker(e6, pendf, ismp,
     # apply nubar perturbation
     if pnu is not None:
         nu = sandy.Xs.from_endf6(endf6_pert.filter_by(listmt=[452, 455, 456]))
-        nu_pert = sandy.core.xs.xs_perturb_worker(nu, ismp, pnu, verbose=verbose)
+        nu_pert = sandy.xs.xs_perturb_worker(nu, ismp, pnu, verbose=verbose)
         endf6_pert = nu_pert.reconstruct_sums(drop=True).to_endf6(endf6_pert).update_intro()
 
     # apply lpc perturbation
@@ -3228,7 +3228,7 @@ def endf6_perturb_worker(e6, pendf, ismp,
             dummy_xs = sandy.Xs(
                 df.rename({"EOUT": "E"}, axis=1).set_index(["MAT","MT"])[["E","VALUE"]].pivot(columns="E").T.droplevel(level=0)
             )
-            dummy_xs_pert = sandy.core.xs.xs_perturb_worker(dummy_xs, ismp, pchi, verbose=verbose)
+            dummy_xs_pert = sandy.xs.xs_perturb_worker(dummy_xs, ismp, pchi, verbose=verbose)
             edistr_pert.append(
                 dummy_xs_pert.data.stack([1, 0]).to_frame().reset_index().rename({"E": "EOUT", 0: "VALUE"}, axis=1).assign(K=k, EIN=ein)[["MAT", "MT", "K", "EIN", "EOUT", "VALUE"]]  # sort columns to match Edistr.data
             )
@@ -3239,7 +3239,7 @@ def endf6_perturb_worker(e6, pendf, ismp,
     # apply xs perturbation
     if pxs is not None:
         xs = sandy.Xs.from_endf6(pendf_pert)
-        xs_pert = sandy.core.xs.xs_perturb_worker(xs, ismp, pxs, verbose=verbose)
+        xs_pert = sandy.xs.xs_perturb_worker(xs, ismp, pxs, verbose=verbose)
         pendf_pert = xs_pert.reconstruct_sums(drop=True).to_endf6(pendf_pert).update_intro()
 
     # Run NJOY and convert to ace
@@ -3298,19 +3298,19 @@ def rdd_perturb_worker(endf6, rdd, smp_hl, smp_de, smp_br, ismp,
     Parameters
     ----------
     endf6 : `dict`
-        `data` attribute of :obj:`~sandy.core.endf6.Endf6`.
+        `data` attribute of :obj:`~sandy.endf6.Endf6`.
         It contains the nominal ENDF6 data.
     rdd : `pd.DataFrame`
         `data` attribute of :obj:`~sandy.decay.DecayData`.
         It contains the nominal decay data.
     smp_hl : `pd.DataFrame`
-        `data` attribute of :obj:`~sandy.core.samples.Samples`.
+        `data` attribute of :obj:`~sandy.samples.Samples`.
         It contains the perturbation coefficients for half-lives.
     smp_de : `pd.DataFrame`
-        `data` attribute of :obj:`~sandy.core.samples.Samples`.
+        `data` attribute of :obj:`~sandy.samples.Samples`.
         It contains the perturbation coefficients for decay energies.
     smp_br : `pd.DataFrame`
-        `data` attribute of :obj:`~sandy.core.samples.Samples`.
+        `data` attribute of :obj:`~sandy.samples.Samples`.
         It contains the perturbation coefficients for branching ratios.
     ismp : `int`
         sample ID.
@@ -3325,7 +3325,7 @@ def rdd_perturb_worker(endf6, rdd, smp_hl, smp_de, smp_br, ismp,
     Returns
     -------
     `dict`
-        Either a dictionary of :obj:`~sandy.core.endf6.Endf6` instances for each set of
+        Either a dictionary of :obj:`~sandy.endf6.Endf6` instances for each set of
         perturbation coefficients (if `to_file=False`), or a dictionary
         of `str` with the output file name for each set of perturbation
         coefficients.
@@ -3379,7 +3379,7 @@ def fy_perturb_worker(endf6, fy, smps, ismp,
     Parameters
     ----------
     endf6 : `dict`
-        `data` attribute of :obj:`~sandy.core.endf6.Endf6`.
+        `data` attribute of :obj:`~sandy.endf6.Endf6`.
         It contains the nominal ENDF6 data.
     fy : `pd.DataFrame`
         `data` attribute of :obj:`~sandy.fy.Fy`.
@@ -3401,13 +3401,13 @@ def fy_perturb_worker(endf6, fy, smps, ismp,
         
     Notes
     -----
-    .. note:: It follows the logic of :obj:`~sandy.core.endf6.endf6_perturb_worker` and
-              :obj:`~sandy.core.endf6.rdd_perturb_worker`.
+    .. note:: It follows the logic of :obj:`~sandy.endf6.endf6_perturb_worker` and
+              :obj:`~sandy.endf6.rdd_perturb_worker`.
 
     Returns
     -------
     `dict`
-        Either a dictionary of :obj:`~sandy.core.endf6.Endf6` instances for each set of
+        Either a dictionary of :obj:`~sandy.endf6.Endf6` instances for each set of
         perturbation coefficients (if `to_file=False`), or a dictionary
         of `str` with the output file name for each set of perturbation
         coefficients.
@@ -3430,7 +3430,7 @@ def fy_perturb_worker(endf6, fy, smps, ismp,
     >>> fy = nfpy.data.loc[idx]
     >>> smps = sandy.CategoryCov(pd.DataFrame(np.diag((fy.DFY/fy.FY)**2), index=fy.ZAP, columns=fy.ZAP).fillna(0)).sampling(nsmp)
     >>> smps = smps.data.rename_axis(index="ZAP").stack().rename("VALS").reset_index().assign(E=e, ZAM=zam)[["ZAM", "E", "ZAP", "SMP", "VALS"]]
-    >>> out = sandy.core.endf6.fy_perturb_worker(tape.data, nfpy.data, smps, nsmp-1, verbose=True, to_file=False)
+    >>> out = sandy.endf6.fy_perturb_worker(tape.data, nfpy.data, smps, nsmp-1, verbose=True, to_file=False)
     >>> out = sandy.Endf6(out)
     
     Silly test: assert the `MT=454` was changed, and `MT=459` was not.
@@ -3443,7 +3443,7 @@ def fy_perturb_worker(endf6, fy, smps, ismp,
     >>> tape = sandy.get_endf6_file("jeff_33", "nfpy", 922350)
     >>> smps = tape.get_perturbations(2, covariance=None)
     >>> nfpy = sandy.Fy.from_endf6(tape)
-    >>> out = sandy.core.endf6.fy_perturb_worker(tape.data, nfpy.data, smps, 0)
+    >>> out = sandy.endf6.fy_perturb_worker(tape.data, nfpy.data, smps, 0)
     >>> nfpy0 = sandy.Fy.from_endf6(sandy.Endf6(out))
 
     Assert that ratio of perturbed to nominal FY's is equal to samples.
@@ -3455,7 +3455,7 @@ def fy_perturb_worker(endf6, fy, smps, ismp,
     >>> p = smps.query("ZAM==922350 and SMP==0").VALS
     >>> np.testing.assert_array_almost_equal(p, sp, decimal=4)
     """
-    from ..fy import Fy  # lazy import to avoid circular import issue
+    from .fy import Fy  # lazy import to avoid circular import issue
     endf6_ = Endf6(endf6.copy())  # this was a dictionary
     fy_ = Fy(fy.copy())    # this was a dataframe
 

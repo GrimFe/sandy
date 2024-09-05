@@ -1,35 +1,6 @@
 import logging
 import sys
 
-from .settings import *
-from .constants import *
-from .decay import *
-from .energy_grids import *
-from .errorr import *
-from .gendf import *
-from .fy import *
-from .tsl import *
-from .gls import *
-from .libraries import *
-from .pert import *
-from .edistr import *
-from sandy.zam import *
-from .njoy import *
-from .sections import *
-from .shared import *
-from .utils import *
-from .core import *
-# from .sampling import *  # don't do this
-from .spectra import *
-
-import sandy.mcnp
-import sandy.aleph2
-import sandy.tools
-import sandy.shared
-import sandy.sampling
-
-from .samples import *
-
 testdir = "tests"
 
 
@@ -70,3 +41,36 @@ logging.getLogger().addHandler(ShutdownHandler(level=40))
 
 
 __version__ = '1.1b1'
+
+
+# Must import submodules after __version__ and everything above.
+from .constants import *
+from .cov import *
+from .decay import *
+from .endf6 import *
+from .energy_grids import *
+from .errorr import *
+from .fy import *
+from .gendf import *
+from .gls import *
+from .libraries import *
+from .lpc import *
+from .pert import *
+from .edistr import *
+from .njoy import *
+from .records import *
+from .samples import *
+from .sections import *
+from .settings import *
+from .shared import *
+from .tools import *
+from .tsl import *
+from .utils import *
+from .zam import *
+from .sampling import *
+from .spectra import *
+from .xs import *
+
+# These are folders
+from . import mcnp
+from . import aleph2

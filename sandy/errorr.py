@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import logging
 
-from .core.endf6 import _FormattedFile
-from .core.cov import CategoryCov
-from .core.xs import Xs
-from .core.records import read_cont, read_list
+from .endf6 import _FormattedFile
+from .cov import CategoryCov
+from .xs import Xs
+from .records import read_cont, read_list
 
 __author__ = "Luca Fiorito"
 __all__ = [
@@ -159,7 +159,7 @@ class Errorr(_FormattedFile):
 
         Returns
         -------
-        :obj:`~sandy.core.cov.CategoryCov`
+        :obj:`~sandy.cov.CategoryCov`
             xs/nubar/pfns covariance matrix for all MAT/MT in ERRORR file.
 
         Examples
